@@ -7,29 +7,47 @@ import android.content.res.AssetManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.BasicTextField
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.MaterialTheme
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import com.example.testmanifest.ui.theme.TestManifestTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val navController = rememberNavController()
+            NavHost(navController = navController, startDestination = "main") {
+                composable("main") { MainActivity() }
+                composable("write") { WriteMailContent(navController) }
+                composable("read") { EmailDetailedContent(navController) }
+            }
             TestManifestTheme {
                 var emails = readMails(assets)
                 // A surface container using the 'background' color from the theme
@@ -61,6 +79,7 @@ fun EmailList(emails: List<Email>, onItemClick: (Email) -> Unit) {
             style = MaterialTheme.typography.h4,
             modifier = Modifier.padding(bottom = 8.dp)
         )
+
         Column {
             // Entête de la liste des emails
             Row(modifier = Modifier.padding(vertical = 8.dp),
@@ -118,4 +137,30 @@ fun readMails(assetManager: AssetManager): List<Email> {
         }
     }
     return mails
+}
+
+@Composable
+fun InteractiveTextField() {
+    // State to hold the text value entered by the user
+    val textState = remember { mutableStateOf(TextFieldValue()) }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp)
+            .padding(PaddingValues(top = 8.dp, bottom = 250.dp))
+            .border(1.dp, Color.Black),
+        content = {
+            BasicTextField(
+                value = textState.value,
+                onValueChange = { textState.value = it },
+                textStyle = TextStyle(fontSize = 16.sp),
+                singleLine = true,
+                modifier = Modifier.padding(top = 8.dp),
+                cursorBrush = SolidColor(Color.Black),
+                decorationBox = { innerTextField ->
+                    // Customizing the text field appearance
+                    innerTextField()
+                }
+            )
+        })
 }

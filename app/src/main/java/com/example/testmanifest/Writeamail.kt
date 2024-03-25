@@ -33,24 +33,23 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
 
-class EmailDetailedList : ComponentActivity() {
+class Writeamail : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val navController = rememberNavController()
             TestManifestTheme {
+                val navController = rememberNavController()
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    EmailDetailedContent(navController)
+                    WriteMailContent(navController)
                 }
             }
         }
     }
 }
 
-
 @Composable
-fun EmailDetailedContent(navController: NavController) {
+fun WriteMailContent(navController: NavController) {
     // Dummy data, you can replace it with actual email data
     val emailSubject = "Sujet du mail"
     val emailSender = "Expéditeur du mail"
@@ -83,21 +82,7 @@ fun EmailDetailedContent(navController: NavController) {
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            // Bouton Répondre
-            Button(onClick = { navController.navigate("write") }) {
-                Text(text = "Répondre")
-            }
 
-            // Bouton IA
-            Button(onClick = { /* Handle IA */ }) {
-                Text(text = "IA")
-            }
-        }
 
         // Case de texte sous les boutons
         Text(
@@ -106,6 +91,22 @@ fun EmailDetailedContent(navController: NavController) {
             modifier = Modifier.padding(top = 16.dp)
         )
         InteractiveTextField()
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            // Bouton Répondre
+            Button(onClick = { /* Handle reply */ }) {
+                Text(text = "Brouillon")
+            }
+
+            // Bouton IA
+            Button(onClick = { /* Handle IA */ }) {
+                Text(text = "Envoyer")
+            }
+        }
     }
 }
 
