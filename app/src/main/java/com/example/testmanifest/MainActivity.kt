@@ -2,6 +2,7 @@ package com.example.testmanifest
 
 import Email
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.content.res.AssetManager
 import android.os.Bundle
@@ -15,11 +16,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.MaterialTheme
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,31 +29,26 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import com.example.testmanifest.ui.theme.TestManifestTheme
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val navController = rememberNavController()
-            NavHost(navController = navController, startDestination = "main") {
-                composable("main") { MainActivity() }
-                composable("write") { WriteMailContent(navController) }
-                composable("read") { EmailDetailedContent(navController) }
-            }
             TestManifestTheme {
-                var emails = readMails(assets)
+                var emails = readMails(this)
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
                     EmailList(emails) { email ->
                         // Naviguer vers EmailDetailedList lorsque l'utilisateur clique sur un mail
                         startActivity(Intent(this@MainActivity, EmailDetailedList::class.java).apply {
                             // Passer les données du mail à EmailDetailedList
-                            putExtra("email", email)
+                            putExtra("sender", email.sender)
+                            putExtra("subject", email.subject)
+                            putExtra("container", email.container)
+                            putExtra("texte", email.texte)
                         })
                     }
                 }
@@ -122,19 +114,26 @@ fun DefaultPreview() {
     }
 }
 
-fun readMails(assetManager: AssetManager): List<Email> {
+// Fonction pour lire les emails depuis le fichier "mails.txt" dans res/raw
+fun readMails(context: Context): List<Email> {
     val mails = mutableListOf<Email>()
-    assetManager.open("mails.txt").bufferedReader().useLines { lines ->
-        lines.forEach { line ->
-            val parts = line.split(",")
-            if (parts.size == 4) {
-                val sender = parts[0].trim()
-                val subject = parts[1].trim()
-                val container = parts[2].trim()
-                val texte = parts[3].trim()
-                mails.add(Email(sender, subject, container, texte)) // Ajouter le texte aussi
+    try {
+        val inputStream = context.resources.openRawResource(R.raw.mails)
+        val reader = BufferedReader(InputStreamReader(inputStream))
+        reader.useLines { lines ->
+            lines.forEach { line ->
+                val parts = line.split("|")
+                if (parts.size == 4) {
+                    val sender = parts[0].trim()
+                    val subject = parts[1].trim()
+                    val container = parts[2].trim()
+                    val texte = parts[3].trim()
+                    mails.add(Email(sender, subject, container, texte))
+                }
             }
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
     return mails
 }
