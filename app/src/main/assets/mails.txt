@@ -1,0 +1,3 @@
+clement|test1|projet|test texte du mail 1
+clement|test2|projet| dtectsq!gdhopfze^fsdfsd^$fk^sdf
+zoe|test2|projet2|Cher [Nom du destinataire], J'espère que ce message vous trouve bien. Je tenais à vous informer que [Raison du message], et je souhaitais obtenir votre avis à ce sujet. [Raison supplémentaire du message, le cas échéant]. N'hésitez pas à me contacter si vous avez des questions ou des préoccupations. Je suis disponible pour discuter de cela plus en détail à votre convenance. Cordialement,
