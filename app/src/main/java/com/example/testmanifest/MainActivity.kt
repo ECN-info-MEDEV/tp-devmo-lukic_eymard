@@ -118,8 +118,11 @@ fun DefaultPreview() {
 fun readMails(context: Context): List<Email> {
     val mails = mutableListOf<Email>()
     try {
-        val inputStream = context.resources.openRawResource(R.raw.mails)
+        // Ouvrir le fichier depuis les ressources
+        val inputStream = context.assets.open("mails.txt")
         val reader = BufferedReader(InputStreamReader(inputStream))
+
+        // Utiliser useLines pour lire les lignes du fichier
         reader.useLines { lines ->
             lines.forEach { line ->
                 val parts = line.split("|")
